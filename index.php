@@ -24,7 +24,7 @@
  
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="">
+  <div class="content-wrapper" style="margin-left:0 !important">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <div class="container-fluid">
