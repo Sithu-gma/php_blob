@@ -1,3 +1,12 @@
+<?php
+  session_start();
+  if(empty($_SESSION['user_id']) and empty($_SESSION['logged_in'])) {
+    header("location: login.php");
+  }
+  require "config/db.php";
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,11 +25,7 @@
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
-  <!-- Navbar -->
- 
-  <!-- /.navbar -->
-
-  <!-- Main Sidebar Container -->
+  
  
 
   <!-- Content Wrapper. Contains page content -->
@@ -36,155 +41,90 @@
         </div>
       </div><!-- /.container-fluid -->
     </section>
+    <?php
+      if(!empty($_GET['pageno'])){
+        $pageno=$_GET['pageno'];
+      }else{
+        $pageno=1;
+      }
+      $numRec=3;
+      $offset=($pageno-1)*$numRec;
+      $stmt=$pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+      $stmt->execute();
+      $raw=$stmt->fetchAll();
+      $totalPages=ceil(count($raw)/$numRec);
 
+      $stmt=$pdo->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numRec");
+      $stmt->execute();
+      $result=$stmt->fetchAll();
+
+
+      
+     ?>
     <!-- Main content -->
-    <section class="content">
-     
+    <section class="content">     
         <!-- /.row -->
 
         <div class="row">
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header text-center">
-                <div class="user-block ">
-                  
-                  <span class="username "><a href="#">Blog Title</a></span>
-                  
-                </div>
-                
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
+            <?php             
+              if($result):
+              foreach($result as $val):                        
+            ?>
+                      <div class="col-md-4">
+                        <!-- Box Comment -->
+                        <div class="card card-widget">
+                          <div class="card-header text-center">
+                            <div class="user-block ">                  
+                              <span class="username "><a href="#"><?= $val['title']; ?></a></span>                  
+                            </div>
+                            
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body" >                        
+                            <a href="blog-detail.php?id=<?= $val['id'];?>">
+                            <img class="img-fluid pad" src="admin/images/<?=$val['image'];?>" alt="" style="width:100%;height:250px !important"> 
+                            </a>            
+                          </div>
+                          
+                        </div>
+                      </div>
 
-               
-              </div>
-              
-            </div>
+              <?php                   
+                  endforeach;
+                endif;            
+              ?>
+          
             <!-- /.card -->
-          </div>
-
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header text-center">
-                <div class="user-block ">
-                  
-                  <span class="username "><a href="#">Blog Title</a></span>
-                  
-                </div>
-                
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-               
-              </div>
-              
-            </div>
-            <!-- /.card -->
-          </div>
-
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header text-center">
-                <div class="user-block ">
-                  
-                  <span class="username "><a href="#">Blog Title</a></span>
-                  
-                </div>
-                
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-               
-              </div>
-              
-            </div>
-            <!-- /.card -->
-          </div>
-
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header text-center">
-                <div class="user-block ">
-                  
-                  <span class="username "><a href="#">Blog Title</a></span>
-                  
-                </div>
-                
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-               
-              </div>
-              
-            </div>
-            <!-- /.card -->
-          </div>
-
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header text-center">
-                <div class="user-block ">
-                  
-                  <span class="username "><a href="#">Blog Title</a></span>
-                  
-                </div>
-                
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-               
-              </div>
-              
-            </div>
-            <!-- /.card -->
-          </div>
-
-          <div class="col-md-4">
-            <!-- Box Comment -->
-            <div class="card card-widget">
-              <div class="card-header text-center">
-                <div class="user-block ">
-                  
-                  <span class="username "><a href="#">Blog Title</a></span>
-                  
-                </div>
-                
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <img class="img-fluid pad" src="dist/img/photo2.png" alt="Photo">
-
-               
-              </div>
-              
-            </div>
-            <!-- /.card -->
-          </div>
+           
+          
          
-         
-        </div>
-
+        </div>    
+        <!-- /.row -->
+        <div class="row mb-3 float-right">
+            <nav aria-label="Page navigation example " >
+              <ul class="pagination justify-content-end ">
+                <li class="page-item">
+                  <a class="page-link" href="?pageno=1">First</a>
+                </li>
+                <li class="page-item <?php if($pageno<=1) { echo'disabled'; } ?>">
+                  <a class="page-link" href="<?php if($pageno<=1 ) {echo '#';} else { echo '?pageno='.($pageno-1);}?>">Previous</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="#"><?=$pageno;?></a>
+                </li>
+                <li class="page-item <?php if($pageno >=$totalPages) { echo'disabled'; }?>">
+                  <a class="page-link" href="<?php if($pageno>=$totalPages ) {echo '#';} else { echo '?pageno='.($pageno+1);}?>">Next</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?pageno=<?php echo $totalPages; ?>">Last</a>
+                </li>
+              </ul>
+            </nav>
+            </div>
+            <br>
+            <br>
         
-        <!-- /.row -->
-
       
-        <!-- /.row -->
-
-      </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
 

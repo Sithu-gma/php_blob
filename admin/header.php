@@ -45,7 +45,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <i class="fas fa-search"></i>
         </a>
         <div class="navbar-search-block">
-          <form action="index.php" method="post" class="form-inline">
+          <form action="<?php echo $page== 'index.php' ? 'index.php': 'user-list.php';?>" method="post" class="form-inline">
             <div class="input-group input-group-sm">
               <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
               <div class="input-group-append">
@@ -90,12 +90,34 @@ scratch. This page gets rid of all links and provides the needed markup only.
         </div>
       </div>
       <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-              
-           
-          <li class="nav-item">
-            
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">         
+         <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+               Blog             
+              </p>
+            </a>
           </li>
+          <li class="nav-item">
+            <a href="user-list.php" class="nav-link">              
+            <i class="nav-icon far fa-circle"></i>
+              <p>
+               USER LIST        
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="user-add.php" class="nav-link">              
+            <i class="nav-icon far fa-circle"></i>
+              <p>
+               NEW USER        
+              </p>
+            </a>
+          </li>
+                 
+          
+       
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

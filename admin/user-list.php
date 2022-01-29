@@ -13,30 +13,30 @@
       }else{
         $pageno=1;
       };
-      $numofrecs=2;
+      $numofrecs=3;
       $offset= ($pageno-1)*$numofrecs;
     
 
-      if(empty($_POST['search'])) {
-        $stmt=$pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+      // if(empty($_POST['search'])) {
+        $stmt=$pdo->prepare("SELECT * FROM users ORDER BY id DESC");
         $stmt->execute();
         $rawresult=$stmt->fetchAll();
         $total_pages=ceil(count($rawresult) /$numofrecs);
 
-        $stmt=$pdo->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numofrecs");
+        $stmt=$pdo->prepare("SELECT * FROM users ORDER BY id DESC LIMIT $offset,$numofrecs");
         $stmt->execute();
         $result=$stmt->fetchAll();
-      } else {
-        $searchKey=$_POST['search'];
-        $stmt=$pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC");
-        $stmt->execute();
-        $rawresult=$stmt->fetchAll();
-        $total_pages=ceil(count($rawresult) /$numofrecs);
+      // } else {
+      //   $searchKey=$_POST['search'];
+      //   $stmt=$pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC");
+      //   $stmt->execute();
+      //   $rawresult=$stmt->fetchAll();
+      //   $total_pages=ceil(count($rawresult) /$numofrecs);
 
-        $stmt=$pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numofrecs");
-        $stmt->execute();
-        $result=$stmt->fetchAll();
-      }
+      //   $stmt=$pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numofrecs");
+      //   $stmt->execute();
+      //   $result=$stmt->fetchAll();
+      // }
 
 
     ?>
@@ -46,15 +46,23 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header">
-                  <a href="add.php" class="btn btn-success"> New Blog</a>
+                  <a href="user-add.php" class="btn btn-success">Create New User</a>
               </div>
               <div class="card-body">
+                <div class="card-title">
+                  <?php if(isset($_GET['del'])): ?>                    
+                      <div class="alert alert-danger" role="alert">
+                        A USER DELETED !
+                      </div>
+                  <?php endif; ?>
+                </div>
 
               <table class="table stripped">
                 <thead>
                   <th>Id</th>
-                  <th>TITLE</th>
-                  <th>DESC</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
                   <th>ACTION</th>
                 </thead>
                 <tbody>
@@ -65,15 +73,24 @@
                   ?>
                   <tr>
                         <td><?=$i; ?></td>
-                        <td><?=$val['title']; ?></td>
-                        <td><?=substr($val['content'],0,40). "..."; ?></td>
+                        <td><?=$val['name']; ?></td>
+                        <td><?=$val['email']; ?></td>
+                        <td>
+                          <?php
+                            if($val['role']=='1'){
+                              echo 'Admin';
+                            }else{
+                              echo 'User';
+                            }
+                          ?>
+                        </td>
                         <td>
                           <div class="btn-group">
                             <div class="container">
-                              <a href="edit.php?id=<?= $val['id']?>" class="btn btn-primary">Edit</a>
+                              <a href="user-edit.php?id=<?= $val['id']?>" class="btn btn-primary">Edit</a>
                             </div>
                             <div class="container">
-                              <a href="del.php?id=<?= $val['id'] ?>" class="btn btn-danger">DEL</a>
+                              <a href="user-del.php?id=<?= $val['id'] ?>" class="btn btn-danger">DEL</a>
                             </div>
                           </div>
                         </td>
@@ -126,16 +143,6 @@
     </div>
     <!-- /.content -->
   </div>
-  <!-- /.content-wrapper -->
-
-  <!-- Control Sidebar -->
-  <!-- <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-    <!-- <div class="p-3">
-      <h5>Title</h5>
-      <p>Sidebar content</p>
-    </div>
-  </aside> -->
-  <!-- /.control-sidebar -->
+ 
 
   <?php  include('footer.php'); ?>
