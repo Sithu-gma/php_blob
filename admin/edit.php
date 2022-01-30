@@ -6,34 +6,44 @@
   }
 
   if($_POST){
-    $id=$_POST['id'];
-    $title=$_POST['title'];
-    $content=$_POST['content'];
-   
-    if($_FILES['image']['name'] != null){
-      $file='images/'.$_FILES['image']['name'];
-      $imageType=pathinfo($file,PATHINFO_EXTENSION);
-        if($imageType!='png' && $imageType!='jpg' && $imageType!= 'jpeg'){
+    if(empty($_POST['title'])|| empty($_POST['content'])){
+      if(empty($_POST['title'])){
+        $titleErr="YOUR Name is Null.";
+      }
+      if(empty($_POST['Content'])){
+        $conErr="YOUR Content is Null.";
+      }
+     
+    }else{
+      $id=$_POST['id'];
+      $title=$_POST['title'];
+      $content=$_POST['content'];
+    
+      if($_FILES['image']['name'] != null){
+        $file='images/'.$_FILES['image']['name'];
+        $imageType=pathinfo($file,PATHINFO_EXTENSION);
+          if($imageType!='png' && $imageType!='jpg' && $imageType!= 'jpeg'){
 
-            echo "<script>alert('image must be png,jpg,jpeg')</script>";
+              echo "<script>alert('image must be png,jpg,jpeg')</script>";
 
-        }else{
-            $image=$_FILES['image']['name'];
-            move_uploaded_file($_FILES['image']['tmp_name'],$file);
-            $stmt=$pdo->prepare("UPDATE posts SET title='$title', content='$content',image='$image' WHERE id='$id'");
-            $result=$stmt->execute();            
-          if($result) {
-            echo "<script>alert('The Blog has just Added');window.location.href='index.php';</script>";
+          }else{
+              $image=$_FILES['image']['name'];
+              move_uploaded_file($_FILES['image']['tmp_name'],$file);
+              $stmt=$pdo->prepare("UPDATE posts SET title='$title', content='$content',image='$image' WHERE id='$id'");
+              $result=$stmt->execute();            
+            if($result) {
+              echo "<script>alert('The Blog has just Added');window.location.href='index.php';</script>";
+            }
           }
-        }
-    }else {
-      
-      $stmt=$pdo->prepare("UPDATE posts SET title='$title', content='$content' WHERE id='$id'");
-      $result=$stmt->execute();            
-      if($result) {
-          echo "<script>alert('The Blog has just Added');window.location.href='index.php';</script>";
+      }else {
+        
+        $stmt=$pdo->prepare("UPDATE posts SET title='$title', content='$content' WHERE id='$id'");
+        $result=$stmt->execute();            
+        if($result) {
+            echo "<script>alert('The Blog has just Added');window.location.href='index.php';</script>";
       }
     }
+   }
     
   }
 
@@ -58,17 +68,20 @@
                   <input type="hidden" name="id" value="<?=$result[0]['id']?>">
                   <div class="form-group">
                       <label for="title">Title</label>
+                      <p class="text-danger"><?php echo empty($conErr)? '': $conErr;?></p>
                       <input type=" text" name="title" class="form-control" value="<?=$result[0]['title']?>">
                   </div>
 
                   <div class="form-group">
-                      <label for="desc">Desc</label>
+                      <label for="desc">Content</label>
+                      <p class="text-danger"><?php echo empty($conErr)? '': $conErr;?></p>
                         <textarea name="content" class="form-control" id="desc" ><?=$result[0]['content']?>
                         </textarea>
                   </div>
 
                   <div class="form-group">
                     <label for="title">Image</label><br>
+                    
                     <img src="images/<?=$result[0]['image']?>" alt="" width="150px" height="150px"><br>
                       <input type="file" name="image" value="<?=$result[0]['image']?>">
                   </div>

@@ -2,13 +2,29 @@
   session_start();
   require "../config/db.php";
   if(empty($_SESSION['user_id']) and empty($_SESSION['logged_in'])) {
-    header("location: login.php");
+    header("location: ../login.php");
   }
   include('header.php');
 ?>
     <!-- Main content -->
     <?php
         if($_POST){
+        
+       
+          if(empty($_POST['title'])|| empty($_POST['content'])|| empty($_FILES['image']['name'])){
+            
+            if(empty($_POST['title'])){
+             
+              $titleErr="YOUR Name is Null.";
+            }
+            if(empty($_POST['content'])){
+
+              $conErr="YOUR Content is Null.";
+            }
+            if(empty($_FILES['image']['name'])){
+              $imgErr="YOUR Image is Null.";
+            }
+          }else{
             $file='images/'.$_FILES['image']['name'];
             $imageType=pathinfo($file,PATHINFO_EXTENSION);
               if($imageType !='png' && $imageType !='jpg' && $imageType != 'jpeg'){
@@ -26,11 +42,12 @@
                       ':content'=>$content,
                       ':image'=>$img,
                       ':user_id'=>$_SESSION['user_id'],
-              ]);
+                  ]);
                 if($result) {
                     echo "<script>alert('The Blog has just Added');window.location.href='index.php';</script>";
                 }
-            }
+              }
+          }
         }
 
      
@@ -48,19 +65,20 @@
               <form action="add.php" method="post" enctype="multipart/form-data">
                   <div class="form-group">
                       <label for="title">Title</label>
+                      <p class="text-danger"><?php echo empty($titleErr)? '': $titleErr;?></p>
                       <input type=" text" name="title" class="form-control">
                   </div>
 
                   <div class="form-group">
-                      <label for="desc">Desc</label>
-                        <textarea name="content" class="form-control" id="desc">
-
-                        </textarea>
+                      <label for="desc">Content</label>
+                      <p class="text-danger"><?php echo empty($conErr)? '': $conErr;?></p>
+                        <textarea name="content" class="form-control" id="desc"></textarea>
                   </div>
 
                   <div class="form-group">
-                      <label for="title">Image</label><br>
-                      <input type="file" name="image" >
+                      <label for="title">Image</label>
+                      <p class="text-danger"><?php echo empty($imgErr)? '': $imgErr;?></p>
+                      <input type="file" name="image" value="">
                   </div>
 
                   <div class="form-group">

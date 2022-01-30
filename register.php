@@ -3,30 +3,46 @@
   require "config/db.php";
  
   if($_POST){
-    $email=$_POST['email'];
-    $password=$_POST['password'];
-    $name=$_POST['name'];
-    $role=2;
-    $stmt=$pdo->prepare("SELECT * FROM users WHERE email=:email");
-    $stmt->bindValue(":email", $email);
-    $stmt->execute();
-    $user=$stmt->fetch(PDO::FETCH_ASSOC);
+    if(empty($_POST['name'])|| empty($_POST['email'])|| empty($_POST['password'])|| strlen($_POST['password'])<4){
+            
+      if(empty($_POST['name'])){             
+        $nameErr="YOUR Name is Null.";
+      }
+      if(empty($_POST['email'])){
+        $emailErr="YOUR Email is Null.";
+      }
+      if(empty($_POST['password'])){
+        $passErr="YOUR password is Null.";
+      }else if(strlen($_POST['password'])<4){
+        $passErr="YOUR have to fill at least 4  char";
+      }
+      
+    }else{
+      $email=$_POST['email'];
+      $password=password_hash($_POST['password'],PASSWORD_DEFAULT);  
+      $name=$_POST['name'];
+      $role=2;
+      $stmt=$pdo->prepare("SELECT * FROM users WHERE email=:email");
+      $stmt->bindValue(":email", $email);
+      $stmt->execute();
+      $user=$stmt->fetch(PDO::FETCH_ASSOC);
+      
     
-   
-    if($user){
-     
-      echo "<script>alert('Duplicated Email')</script>";
-    }else {
-        $stmt=$pdo->prepare("INSERT INTO users (name , email, password ,role) VALUES (:name, :email, :password ,:role) ");
-        $stmt->bindValue(":email", $email);
-        $stmt->bindValue(":name", $name);
-        $stmt->bindValue(":password", $password);
-        $stmt->bindValue(":role", $role);
-        $result=$stmt->execute();
-        if($result){
-     
-            echo "<script>alert('successfully register now');window.location.href('login.php')</script>";
-        }
+      if($user){
+      
+        echo "<script>alert('Duplicated Email')</script>";
+      }else {
+          $stmt=$pdo->prepare("INSERT INTO users (name , email, password ,role) VALUES (:name, :email, :password ,:role) ");
+          $stmt->bindValue(":email", $email);
+          $stmt->bindValue(":name", $name);
+          $stmt->bindValue(":password", $password);
+          $stmt->bindValue(":role", $role);
+          $result=$stmt->execute();
+          if($result){
+      
+              echo "<script>alert('successfully register now');window.location.href('login.php')</script>";
+          }
+      }
     }
   }
   
@@ -59,14 +75,16 @@
       <p class="login-box-msg">Sign in to start your session</p>
 
       <form action="register.php" method="post">
+      <p class="text-danger"><?php echo empty($nameErr)? '': $nameErr;?></p>
       <div class="input-group mb-3">
           <input type="text" class="form-control" name="name" placeholder="Name">
           <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-name"></span>
+            <div class="input-group-text">           
+              <br><span class="fas fa-user"></span>
             </div>
           </div>
         </div>
+        <p class="text-danger"><?php echo empty($emailErr)? '': $emailErr;?></p>
         <div class="input-group mb-3">
           <input type="email" class="form-control" name="email" placeholder="Email">
           <div class="input-group-append">
@@ -75,6 +93,7 @@
             </div>
           </div>
         </div>
+        <p class="text-danger"><?php echo empty($passErr)? '': $passErr;?></p>
         <div class="input-group mb-3">
           <input type="password" class="form-control"name="password" placeholder="Password">
           <div class="input-group-append">

@@ -118,16 +118,21 @@
                 <div class="card-comment">          
                 <?php
                   if($_POST) {
-                    $content=$_POST['content'];
-                    $user_id=$_SESSION['user_id'];
-                    $post_id=$_GET['id'];
-                    $stmt=$pdo->prepare("INSERT INTO comments (content, user_id, post_id) VALUES (:content, :user_id, :post_id)");
-                   $stmt->execute([
-                    ':content'=>$content,
-                    ':user_id'=> $user_id,
-                    ':post_id'=> $post_id
-                    ]);           
+                    if(empty($_POST['content'])){
+                      $contentErr="Pls Write Down Something";
+                    }else{
+                      $content=$_POST['content'];
+                      $user_id=$_SESSION['user_id'];
+                      $post_id=$_GET['id'];
+                      $stmt=$pdo->prepare("INSERT INTO comments (content, user_id, post_id) VALUES (:content, :user_id, :post_id)");
+                      $stmt->execute([
+                        ':content'=>$content,
+                        ':user_id'=> $user_id,
+                        ':post_id'=> $post_id
+                        ]);           
+                    }
                   }
+                   
                       $stmtcm=$pdo->prepare("SELECT comments.*,users.name,users.id FROM comments LEFT JOIN users ON comments.user_id=users.id 
                       WHERE comments.post_id=".$_GET['id']);
                       $stmtcm->execute();
@@ -159,6 +164,7 @@
                 <form action="" method="post">                
                   <div class="img-push" >
                    <div class="mb-3">
+                   <p class="text-danger"><?php echo empty($contentErr)? '': $contentErr;?></p>
                    <input type="text" name="content" class="form-control form-control-sm" placeholder="Press enter to post comment" >
                    </div>
                     <input type="submit" class="btn btn-success"name="submit" value="New Comment">

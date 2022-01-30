@@ -4,46 +4,58 @@
   if(empty($_SESSION['user_id']) and empty($_SESSION['logged_in'])) {
     header("location: login.php");
   }
-  if($_POST){   
-    $id=$_POST['id'];
-    $name=$_POST['name'];
-    $email=$_POST['email'];  
-    $password=$_POST['password'];  
-   
-    if(empty($_POST['role'])){
-      $role=2;
+  if($_POST){  
+    if(empty($_POST['name'])|| empty($_POST['email'])||strlen($_POST['password'])<4){
+            
+      if(empty($_POST['name'])){             
+        $nameErr="YOUR Name is Null.";
+      }
+      if(empty($_POST['email'])){
+        $emailErr="YOUR Email is Null.";
+      }
+      
+      if(strlen($_POST['password'])<4){
+        $passErr="YOUR have to fill at least 4  char";
+      }
+      
     }else{
-      $role=1;
-    };
-    $stmt=$pdo->prepare("SELECT * FROM users WHERE email=:email AND id!=:id");
-    
-    $stmt->execute([
-      ':email'=>$email,
-      ':id'=>$id,
-    ]);
-    $user=$stmt->fetch(PDO::FETCH_ASSOC);   
-  
-  
-      if($user) {              
-        echo "<script>alert('Email is duplicated');window.location.href='user-edit.php?id=$id&dd=true';</script>";
-      }else{
-        $stmt=$pdo->prepare("UPDATE users SET name=:name, email=:email, role=:role, password=:password WHERE id=:id");
-        $result=$stmt->execute([
+        $id=$_POST['id'];
+        $name=$_POST['name'];
+        $email=$_POST['email'];  
+        $password=password_hash($_POST['password'],PASSWORD_DEFAULT);  
+      
+        if(empty($_POST['role'])){
+          $role=2;
+        }else{
+          $role=1;
+        };
+        $stmt=$pdo->prepare("SELECT * FROM users WHERE email=:email AND id!=:id");
+        
+        $stmt->execute([
+          ':email'=>$email,
           ':id'=>$id,
-          ':name' => $name,
-          ':email'=> $email,
-          ':role' => $role,
-          ':password' => $password,
         ]);
-        if($result) {
-          echo "<script>alert('The Blog has just Added');window.location.href='user-list.php';</script>";
-        }  
-       
-      }  
-            
-   
-            
-}
+        $user=$stmt->fetch(PDO::FETCH_ASSOC);   
+      
+      
+          if($user) {              
+            echo "<script>alert('Email is duplicated');window.location.href='user-edit.php?id=$id&dd=true';</script>";
+          }else{
+            $stmt=$pdo->prepare("UPDATE users SET name=:name, email=:email, role=:role, password=:password WHERE id=:id");
+            $result=$stmt->execute([
+              ':id'=>$id,
+              ':name' => $name,
+              ':email'=> $email,
+              ':role' => $role,
+              ':password' => $password,
+            ]);
+            if($result) {
+              echo "<script>alert('The Blog has just Added');window.location.href='user-list.php';</script>";
+            }  
+          
+          }  
+    }            
+  }
   $stmt=$pdo->prepare("SELECT * FROM users WHERE id=".$_GET['id']);
   $stmt->execute();
   $result=$stmt->fetchAll();
@@ -72,17 +84,20 @@
                   <input type="hidden" name="id" value="<?=$result[0]['id']?>">
                   <div class="form-group">
                       <label for="title">Title</label>
+                      <p class="text-danger"><?php echo empty($nameErr)? '': $nameErr;?></p>
                       <input type=" text" name="name" class="form-control" value="<?=$result[0]['name']?>">
                   </div>
 
                   <div class="form-group">
                       <label for="desc">Email</label>
-                        <textarea name="email" class="form-control" id="desc" ><?=$result[0]['email']?>
-                        </textarea>
+                      <p class="text-danger"><?php echo empty($emailErr)? '': $emailErr;?></p>
+                      <input type="email" name="email" class="form-control" id="desc" value="<?=$result[0]['email']?>" >
+                        
                   </div>
                   
                   <div class="form-group">
                       <label for="desc">Password</label>
+                      <p class="text-danger"><?php echo empty($passErr)? '': $passErr;?></p>
                       <input type="password" name="password" class="form-control" value="<?=$result[0]['password']?>">
                   </div>
 
