@@ -1,6 +1,7 @@
 <?php
   session_start();
   require 'config/db.php';
+  require 'config/common.php';
   if(empty($_SESSION['user_id']) and empty($_SESSION['logged_in'])) {
     header("location: login.php");
   }
@@ -10,7 +11,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Widgets</title>
+  <title>Blog Detail</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -102,12 +103,12 @@
             <!-- Box Comment -->
             <div class="card card-widget">
               <div class="card-header text-center">
-                <a href="#"><?=$result[0]['title']; ?></a>         
+                <a href="#"><?= escape($result[0]['title']); ?></a>         
                 
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <img class="img-fluid pad" src="admin/images/<?=$result[0]['image'];?>" alt="Photo" style="width:90%;  !important">
+                <img class="img-fluid pad" src="admin/images/<?= escape($result[0]['image']);?>" alt="Photo" style="width:90%;  !important">
                 
               </div>
               <!-- /.card-body -->
@@ -148,10 +149,10 @@
                   
                     <div class="comment-text">
                       <span class="username">
-                        <?=$com['name'];?>   
-                        <span class="text-muted float-right"><?=$com['created_at'];?> </span>                 
+                        <?=escape($com['name']);?>   
+                        <span class="text-muted float-right"><?= escape($com['created_at']);?> </span>                 
                       </span>
-                      <?=$com['content'];?>  
+                      <?= escape($com['content']);?>  
                     </div>
                   <?php endforeach; ?>
                   <!-- /.comment-text -->
@@ -161,14 +162,15 @@
               <!-- /.card-footer -->
               
               <div class="card-footer">
-                <form action="" method="post">                
+                <form action="" method="post">  
+                  <input type="hidden" value="<?php echo $_SESSION['_token'] ?>"  name="_token" >             
                   <div class="img-push" >
-                   <div class="mb-3">
-                   <p class="text-danger"><?php echo empty($contentErr)? '': $contentErr;?></p>
-                   <input type="text" name="content" class="form-control form-control-sm" placeholder="Press enter to post comment" >
+                    <div class="mb-3">
+                      <p class="text-danger"><?php echo empty($contentErr)? '': $contentErr;?></p>
+                    <input type="text" name="content" class="form-control form-control-sm" placeholder="Press enter to post comment" >
                    </div>
-                    <input type="submit" class="btn btn-success"name="submit" value="New Comment">
-                    <a href="index.php" class="btn btn-success">Back</a>
+                      <input type="submit" class="btn btn-success" name="submit" value="New Comment">
+                      <a href="index.php" class="btn btn-success">Back</a>
                   </div>
                 </form>
               </div>
@@ -195,6 +197,7 @@
   <!-- /.content-wrapper -->
 
   <footer class="main-footer" style="margin-left:0 !important">
+  <?php echo $_SESSION['_token']; ?>
     <div class="float-right d-none d-sm-block">
       <b><a href="admin/logout.php" class="btn btn-danger">Logout</a></b> 
     </div>

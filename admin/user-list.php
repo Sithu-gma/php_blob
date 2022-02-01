@@ -4,6 +4,9 @@
   if(empty($_SESSION['user_id']) and empty($_SESSION['logged_in'])) {
     header("location: ../login.php");
   }
+  if($_SESSION['role'] != 1){
+    header("location: ../index.php");
+  }
   include('header.php');
 ?>
     <!-- Main content -->
@@ -17,7 +20,7 @@
       $offset= ($pageno-1)*$numofrecs;
     
 
-      // if(empty($_POST['search'])) {
+      if(empty($_POST['search'])) {
         $stmt=$pdo->prepare("SELECT * FROM users ORDER BY id DESC");
         $stmt->execute();
         $rawresult=$stmt->fetchAll();
@@ -26,17 +29,17 @@
         $stmt=$pdo->prepare("SELECT * FROM users ORDER BY id DESC LIMIT $offset,$numofrecs");
         $stmt->execute();
         $result=$stmt->fetchAll();
-      // } else {
-      //   $searchKey=$_POST['search'];
-      //   $stmt=$pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC");
-      //   $stmt->execute();
-      //   $rawresult=$stmt->fetchAll();
-      //   $total_pages=ceil(count($rawresult) /$numofrecs);
+      } else {
+        $searchKey=$_POST['search'];
+        $stmt=$pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC");
+        $stmt->execute();
+        $rawresult=$stmt->fetchAll();
+        $total_pages=ceil(count($rawresult) /$numofrecs);
 
-      //   $stmt=$pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numofrecs");
-      //   $stmt->execute();
-      //   $result=$stmt->fetchAll();
-      // }
+        $stmt=$pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numofrecs");
+        $stmt->execute();
+        $result=$stmt->fetchAll();
+      }
 
 
     ?>

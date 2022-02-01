@@ -1,6 +1,7 @@
 <?php 
   session_start();
   require "../config/db.php";
+  require "../config/common.php";
   if(empty($_SESSION['user_id']) and empty($_SESSION['logged_in'])) {
     header("location: ../login.php");
   }
@@ -8,9 +9,8 @@
 ?>
     <!-- Main content -->
     <?php
-        if($_POST){
-        
-       
+        if($_POST){         
+          
           if(empty($_POST['title'])|| empty($_POST['content'])|| empty($_FILES['image']['name'])){
             
             if(empty($_POST['title'])){
@@ -63,6 +63,7 @@
                 </div>
               <div class="card-body">
               <form action="add.php" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="_token" value="<?php echo $_SESSION['_token']; ?>">
                   <div class="form-group">
                       <label for="title">Title</label>
                       <p class="text-danger"><?php echo empty($titleErr)? '': $titleErr;?></p>

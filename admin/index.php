@@ -1,8 +1,12 @@
 <?php 
   session_start();
   require "../config/db.php";
+  require "../config/common.php";
   if(empty($_SESSION['user_id']) and empty($_SESSION['logged_in'])) {
     header("location: ../login.php");
+  }
+  if($_SESSION['role'] != 1){
+    header("location: ../index.php");
   }
   include('header.php');
 ?>
@@ -13,7 +17,7 @@
       }else{
         $pageno=1;
       };
-      $numofrecs=2;
+      $numofrecs=4;
       $offset= ($pageno-1)*$numofrecs;
     
 
@@ -66,14 +70,14 @@
                   <tr>
                         <td><?=$i; ?></td>
                         <td><?=$val['title']; ?></td>
-                        <td><?=substr($val['content'],0,40). "..."; ?></td>
+                        <td><?=escape(substr($val['content'],0,40)). "..."; ?></td>
                         <td>
                           <div class="btn-group">
                             <div class="container">
-                              <a href="edit.php?id=<?= $val['id']?>" class="btn btn-primary">Edit</a>
+                              <a href="edit.php?id=<?= escape($val['id'])?>" class="btn btn-primary">Edit</a>
                             </div>
                             <div class="container">
-                              <a href="del.php?id=<?= $val['id'] ?>" class="btn btn-danger">DEL</a>
+                              <a href="del.php?id=<?= escape($val['id']) ?>" class="btn btn-danger">DEL</a>
                             </div>
                           </div>
                         </td>

@@ -1,6 +1,7 @@
 <?php
   session_start();
   require "config/db.php";
+  include "config/common.php";
  
   if($_POST){
     $email=$_POST['email'];
@@ -60,6 +61,7 @@
       <p class="login-box-msg">Sign in to start your session</p>
 
       <form action="" method="post">
+      <input type="hidden" name="_token" value="<?php echo $_SESSION['_token']; ?>">
         <div class="input-group mb-3">
           <input type="email" class="form-control" name="email" placeholder="Email">
           <div class="input-group-append">
@@ -76,8 +78,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
-         
+        <div class="row">         
           <!-- /.col -->
           <div class="container">
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>

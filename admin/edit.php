@@ -1,6 +1,7 @@
 <?php 
   session_start();
   require "../config/db.php";
+  require "../config/common.php";
   if(empty($_SESSION['user_id']) and empty($_SESSION['logged_in'])) {
     header("location: login.php");
   }
@@ -65,17 +66,18 @@
                 </div>
               <div class="card-body">
               <form action="" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="_token" value="<?php echo $_SESSION['_token']; ?>">
                   <input type="hidden" name="id" value="<?=$result[0]['id']?>">
                   <div class="form-group">
                       <label for="title">Title</label>
                       <p class="text-danger"><?php echo empty($conErr)? '': $conErr;?></p>
-                      <input type=" text" name="title" class="form-control" value="<?=$result[0]['title']?>">
+                      <input type=" text" name="title" class="form-control" value="<?= escape($result[0]['title'])?>">
                   </div>
 
                   <div class="form-group">
                       <label for="desc">Content</label>
                       <p class="text-danger"><?php echo empty($conErr)? '': $conErr;?></p>
-                        <textarea name="content" class="form-control" id="desc" ><?=$result[0]['content']?>
+                        <textarea name="content" class="form-control" id="desc" ><?=escape($result[0]['content'])?>
                         </textarea>
                   </div>
 
@@ -83,7 +85,7 @@
                     <label for="title">Image</label><br>
                     
                     <img src="images/<?=$result[0]['image']?>" alt="" width="150px" height="150px"><br>
-                      <input type="file" name="image" value="<?=$result[0]['image']?>">
+                      <input type="file" name="image" value="<?=escape($result[0]['image'])?>">
                   </div>
 
                   <div class="form-group">

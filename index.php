@@ -4,6 +4,7 @@
     header("location: login.php");
   }
   require "config/db.php";
+  require "config/common.php";
 
 ?>
 
@@ -75,14 +76,14 @@
                         <div class="card card-widget">
                           <div class="card-header text-center">
                             <div class="user-block ">                  
-                              <span class="username "><a href="#"><?= $val['title']; ?></a></span>                  
+                              <span class="username "><a href="#"><?= escape($val['title'])?></a></span>                  
                             </div>
                             
                           </div>
                           <!-- /.card-header -->
                           <div class="card-body" >                        
-                            <a href="blog-detail.php?id=<?= $val['id'];?>">
-                            <img class="img-fluid pad" src="admin/images/<?=$val['image'];?>" alt="" style="width:100%;height:250px !important"> 
+                            <a href="blog-detail.php?id=<?= escape($val['id']);?>">
+                            <img class="img-fluid pad" src="admin/images/<?= escape($val['image'])?>" alt="" style="width:100%;height:250px !important"> 
                             </a>            
                           </div>
                           
